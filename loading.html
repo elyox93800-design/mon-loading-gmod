@@ -11,9 +11,6 @@
             box-sizing: border-box; 
         }
         
-        /* Import Google Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             overflow: hidden; 
@@ -96,7 +93,6 @@
             font-weight: 300;
             letter-spacing: 2px;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-            margin-top: 15px;
         }
         
         /* Section centrale */
@@ -117,16 +113,16 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        /* File d'attente - VERSION SIMPLIFIÉE */
+        /* File d'attente */
         #queue-block {
-            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15) 0%, rgba(79, 172, 254, 0.2) 100%);
-            border: 2px solid rgba(0, 242, 254, 0.4);
-            padding: 35px 32px;
-            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.2) 0%, rgba(0, 242, 254, 0.15) 100%);
+            border: 2px solid rgba(79, 172, 254, 0.3);
+            padding: 30px 28px;
+            border-radius: 12px;
             display: none;
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(10px);
             box-shadow: 
-                0 8px 32px rgba(0, 242, 254, 0.25),
+                0 8px 32px rgba(79, 172, 254, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
         
@@ -135,33 +131,32 @@
             color: #88ccff;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             font-weight: 600;
         }
         
         #queue-position {
-            font-size: 64px;
+            font-size: 56px;
             font-weight: 800;
             color: #00f2fe;
             text-shadow: 
-                0 0 25px rgba(0, 242, 254, 0.6),
-                0 4px 15px rgba(0, 0, 0, 0.7);
-            margin-bottom: 12px;
-            letter-spacing: 3px;
+                0 0 30px rgba(0, 242, 254, 0.8),
+                0 4px 15px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
         }
         
         #queue-info {
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.95);
-            margin-bottom: 8px;
-            font-weight: 500;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 6px;
+            font-weight: 400;
         }
         
         #queue-eta {
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
+            font-size: 13px;
             color: #88ccff;
-            font-weight: 400;
+            font-weight: 300;
         }
         
         /* Infos serveur/carte */
@@ -278,11 +273,6 @@
                 <div class="info-value" id="map-name">Chargement...</div>
             </div>
 
-            <div class="info-item">
-                <div class="info-label">Joueurs</div>
-                <div class="info-value" id="player-count">-/16</div>
-            </div>
-
             <!-- Progression -->
             <div id="progress-section">
                 <div class="info-label" style="margin-bottom: 12px;">Progression</div>
@@ -315,7 +305,6 @@
         function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
             document.getElementById('server-name').textContent = servername;
             document.getElementById('map-name').textContent = mapname;
-            document.getElementById('player-count').textContent = '0/' + maxplayers;
             startMusic();
         }
 
@@ -380,7 +369,7 @@
                 var playersAhead = currentQueuePosition - 1;
                 queueInfo.textContent = playersAhead + ' joueur' + (playersAhead > 1 ? 's' : '') + ' devant vous';
                 var estimatedTime = currentQueuePosition * 5; // 5 secondes par joueur
-                queueEta.textContent = 'Temps estimé : ≈ ' + estimatedTime + 's';
+                queueEta.textContent = 'Temps estimé : ~' + estimatedTime + 's';
             }
         }
         
