@@ -42,7 +42,7 @@
             z-index: 2; 
         }
         
-        /* Container principal */
+        /* Container principal (pas de rectangle, juste positionnement) */
         #content-wrapper {
             position: fixed;
             top: 0;
@@ -56,36 +56,21 @@
             justify-content: space-between;
         }
         
-        /* Header avec sprite animé et titre */
+        /* Header avec logo et titre */
         #header {
             animation: fadeInDown 0.8s ease;
         }
         
-        /* Animation du sprite running */
-        #running-sprite {
-            width: 100px;
-            height: 100px;
+        #logo {
+            font-size: 80px;
             margin-bottom: 20px;
-            background-image: url('running_sprite.png');
-            background-size: 400% 300%; /* 4 colonnes x 3 lignes */
-            animation: run 0.8s steps(12) infinite;
             filter: drop-shadow(0 6px 20px rgba(79, 172, 254, 0.5));
+            animation: float 4s ease-in-out infinite;
         }
         
-        @keyframes run {
-            0% { background-position: 0% 0%; }
-            8.33% { background-position: 25% 0%; }
-            16.66% { background-position: 50% 0%; }
-            25% { background-position: 75% 0%; }
-            33.33% { background-position: 0% 33.33%; }
-            41.66% { background-position: 25% 33.33%; }
-            50% { background-position: 50% 33.33%; }
-            58.33% { background-position: 75% 33.33%; }
-            66.66% { background-position: 0% 66.66%; }
-            75% { background-position: 25% 66.66%; }
-            83.33% { background-position: 50% 66.66%; }
-            91.66% { background-position: 75% 66.66%; }
-            100% { background-position: 0% 0%; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
         
         #title {
@@ -262,7 +247,7 @@
     <div id="content-wrapper">
         <!-- Header -->
         <div id="header">
-            <div id="running-sprite"></div>
+            <div id="logo">⚽</div>
             <div id="title">INAZUMA ELEVEN</div>
             <div id="subtitle">Rejoins l'équipe !</div>
         </div>
@@ -303,8 +288,11 @@
 
     <script>
         var music = document.getElementById('loading-music');
+
+        // Volume fixé à 2%
         music.volume = 0.02;
 
+        // Fonction pour forcer le démarrage de la musique
         function startMusic() {
             music.play().then(function() {
                 console.log("Musique démarrée");
@@ -313,16 +301,19 @@
             });
         }
 
+        // GMod appelle cette fonction dès la connexion
         function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
             document.getElementById('server-name').textContent = servername;
             document.getElementById('map-name').textContent = mapname;
             startMusic();
         }
 
+        // Tentative de secours au clic
         window.addEventListener('click', function() {
             startMusic();
         });
 
+        // Tentative automatique
         var forcePlay = setInterval(function() {
             if (!music.paused) {
                 clearInterval(forcePlay);
@@ -331,6 +322,7 @@
             }
         }, 1000);
 
+        // Fonctions GMod
         function SetStatusChanged(status) { 
             document.getElementById('status').textContent = status; 
         }
@@ -339,6 +331,7 @@
             document.getElementById('status').textContent = 'Téléchargement: ' + fileName; 
         }
         
+        // Animation de la barre de progression
         let progress = 0;
         setInterval(function() {
             if (progress < 95) {
@@ -347,14 +340,20 @@
             }
         }, 100);
 
+        // ============================
+        // SIMULATION DE FILE D'ATTENTE
+        // ============================
+        
         var queueBlock = document.getElementById('queue-block');
         var queuePosition = document.getElementById('queue-position');
         var queueInfo = document.getElementById('queue-info');
         var queueEta = document.getElementById('queue-eta');
         
+        // Simuler une file d'attente (positions aléatoires entre 1 et 15)
         var simulatedQueue = Math.floor(Math.random() * 15) + 1;
         var currentQueuePosition = simulatedQueue;
         
+        // Afficher la queue au début si position > 0
         if (simulatedQueue > 0) {
             queueBlock.style.display = 'block';
             updateQueueDisplay();
@@ -369,16 +368,18 @@
             } else {
                 var playersAhead = currentQueuePosition - 1;
                 queueInfo.textContent = playersAhead + ' joueur' + (playersAhead > 1 ? 's' : '') + ' devant vous';
-                var estimatedTime = currentQueuePosition * 5;
+                var estimatedTime = currentQueuePosition * 5; // 5 secondes par joueur
                 queueEta.textContent = 'Temps estimé : ~' + estimatedTime + 's';
             }
         }
         
+        // Décrémenter la position toutes les 3-7 secondes (simulation)
         var queueInterval = setInterval(function() {
             if (currentQueuePosition > 0) {
                 currentQueuePosition--;
                 updateQueueDisplay();
                 
+                // Masquer le bloc quand on atteint 0
                 if (currentQueuePosition === 0) {
                     setTimeout(function() {
                         queueBlock.style.display = 'none';
@@ -386,7 +387,7 @@
                     }, 2000);
                 }
             }
-        }, Math.random() * 4000 + 3000);
+        }, Math.random() * 4000 + 3000); // Entre 3 et 7 secondes
     </script>
 </body>
 </html>
