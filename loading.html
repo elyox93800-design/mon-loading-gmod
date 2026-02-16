@@ -141,6 +141,7 @@
 
         /* Info serveur en haut à droite */
         #server-info {
+            D
             position: fixed;
             top: 30px;
             right: 30px;
@@ -165,10 +166,11 @@
     </style>
 </head>
 <body>
-    <!-- Image de fond -->
+    <audio id="loading-music" loop>
+        <source src="loading_sound.mp3" type="audio/mpeg">
+    </audio>
+
     <div id="background"></div>
-    
-    <!-- Overlay -->
     <div id="overlay"></div>
 
     <!-- Logo -->
@@ -195,8 +197,17 @@
     <script>
         // Récupérer les infos du serveur depuis GMod
         function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
-            document.getElementById('server-name').textContent = servername;
-            document.getElementById('map-name').textContent = mapname;
+        if (servername) {
+        document.getElementById('server-name').textContent = servername;
+        }
+
+        // --- AJOUTE CES LIGNES POUR LA MUSIQUE ---
+        var music = document.getElementById('loading-music');
+        music.volume = 0.3; // Volume à 30% pour ne pas surprendre les joueurs
+        music.play().catch(function(error) {
+        console.log("Le son attend une interaction pour démarrer");
+        });
+        // -----------------------------------------
         }
 
         // Mettre à jour la barre de progression
