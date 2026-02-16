@@ -27,17 +27,18 @@
             background-image: url('loading_background.png'); 
             background-size: cover; 
             background-position: center; 
-            z-index: 1; 
+            z-index: 1;
+            filter: brightness(1.1) saturate(1.1);
         }
         
-        /* Overlay très léger (réduit de 0.3-0.7 à 0.1-0.3) */
+        /* Overlay très léger */
         #overlay { 
             position: fixed; 
             top: 0; 
             left: 0; 
             width: 100%; 
             height: 100%; 
-            background: linear-gradient(to right, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0) 100%);
+            background: linear-gradient(to right, rgba(10, 14, 39, 0.85) 0%, rgba(10, 14, 39, 0.4) 35%, transparent 70%);
             z-index: 2; 
         }
         
@@ -46,41 +47,46 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 400px;
+            width: 420px;
             height: 100%;
-            background: rgba(10, 14, 39, 0.7);
-            backdrop-filter: blur(10px);
+            background: rgba(10, 14, 39, 0.75);
+            backdrop-filter: blur(15px);
             z-index: 3;
-            padding: 60px 40px;
+            padding: 50px 45px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.3);
         }
         
         /* Logo et titre */
         #header {
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         
         #logo {
-            font-size: 70px;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+            font-size: 65px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 4px 12px rgba(79, 172, 254, 0.4));
         }
         
         #title {
-            font-size: 36px;
+            font-size: 38px;
             font-weight: 700;
             color: #fff;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
             margin-bottom: 8px;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #fff 0%, #88ccff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
         #subtitle {
-            font-size: 16px;
+            font-size: 15px;
             color: #88ccff;
             font-weight: 300;
+            letter-spacing: 1px;
         }
         
         /* Section centrale avec infos */
@@ -89,22 +95,30 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 30px;
+            gap: 25px;
         }
         
         .info-block {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
             border-left: 3px solid #4facfe;
-            padding: 15px 20px;
-            border-radius: 4px;
+            padding: 18px 22px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .info-block:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-left-width: 4px;
         }
         
         .info-label {
-            font-size: 12px;
+            font-size: 11px;
             color: #88ccff;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+            font-weight: 600;
         }
         
         .info-value {
@@ -113,18 +127,48 @@
             font-weight: 500;
         }
         
+        /* File d'attente (visible uniquement si en queue) */
+        #queue-block {
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.15) 0%, rgba(0, 242, 254, 0.1) 100%);
+            border-left: 3px solid #00f2fe;
+            padding: 20px 22px;
+            border-radius: 8px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        #queue-position {
+            font-size: 42px;
+            font-weight: 700;
+            color: #00f2fe;
+            text-shadow: 0 0 20px rgba(0, 242, 254, 0.5);
+            margin-bottom: 8px;
+        }
+        
+        #queue-info {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 5px;
+        }
+        
+        #queue-eta {
+            font-size: 12px;
+            color: #88ccff;
+        }
+        
         /* Barre de progression */
         #progress-section {
-            margin-top: 20px;
+            margin-top: 15px;
         }
         
         #progress-container {
             width: 100%;
-            height: 6px;
-            background: rgba(255,255,255,0.1);
+            height: 8px;
+            background: rgba(255,255,255,0.08);
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 12px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         
         #progress-bar {
@@ -132,35 +176,54 @@
             height: 100%;
             background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
             transition: width 0.3s ease;
-            box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            to { left: 100%; }
         }
         
         #status {
-            font-size: 14px;
+            font-size: 13px;
             color: rgba(255, 255, 255, 0.7);
             font-weight: 300;
         }
         
         /* Contrôle de volume */
         #volume-control {
-            margin-top: 30px;
+            margin-top: 25px;
             padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
         
         #volume-label {
-            font-size: 12px;
+            font-size: 11px;
             color: #88ccff;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-weight: 600;
         }
         
         #volume-icon {
-            font-size: 18px;
+            font-size: 16px;
+            filter: drop-shadow(0 2px 4px rgba(79, 172, 254, 0.3));
         }
         
         #volume-slider {
@@ -168,7 +231,7 @@
             height: 6px;
             -webkit-appearance: none;
             appearance: none;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 10px;
             outline: none;
             cursor: pointer;
@@ -177,48 +240,58 @@
         #volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             background: linear-gradient(135deg, #4facfe, #00f2fe);
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(79, 172, 254, 0.5);
-            transition: transform 0.2s;
+            box-shadow: 0 2px 10px rgba(79, 172, 254, 0.6);
+            transition: all 0.2s ease;
         }
         
         #volume-slider::-webkit-slider-thumb:hover {
             transform: scale(1.2);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.8);
         }
         
         #volume-slider::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             background: linear-gradient(135deg, #4facfe, #00f2fe);
             border-radius: 50%;
             cursor: pointer;
             border: none;
-            box-shadow: 0 2px 8px rgba(79, 172, 254, 0.5);
-            transition: transform 0.2s;
+            box-shadow: 0 2px 10px rgba(79, 172, 254, 0.6);
+            transition: all 0.2s ease;
         }
         
         #volume-slider::-moz-range-thumb:hover {
             transform: scale(1.2);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.8);
         }
         
         #volume-value {
-            font-size: 14px;
+            font-size: 13px;
             color: #fff;
             margin-top: 8px;
             text-align: right;
+            font-weight: 500;
         }
         
         /* Aide clavier */
         #keyboard-hint {
-            font-size: 11px;
-            color: rgba(136, 204, 255, 0.7);
-            margin-top: 8px;
+            font-size: 10px;
+            color: rgba(136, 204, 255, 0.6);
+            margin-top: 6px;
             text-align: center;
             font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         /* Animation de pulsation pour le logo */
@@ -250,6 +323,14 @@
 
         <!-- Middle Section -->
         <div id="middle-section">
+            <!-- File d'attente (visible uniquement si en queue) -->
+            <div id="queue-block">
+                <div class="info-label">📋 File d'attente</div>
+                <div id="queue-position">#0</div>
+                <div id="queue-info">En attente de connexion...</div>
+                <div id="queue-eta">Temps estimé : --</div>
+            </div>
+
             <div class="info-block">
                 <div class="info-label">Serveur</div>
                 <div class="info-value" id="server-name">Chargement...</div>
@@ -388,6 +469,55 @@
                 document.getElementById('progress-bar').style.width = progress + '%';
             }
         }, 100);
+
+        // ============================
+        // SIMULATION DE FILE D'ATTENTE
+        // ============================
+        
+        var queueBlock = document.getElementById('queue-block');
+        var queuePosition = document.getElementById('queue-position');
+        var queueInfo = document.getElementById('queue-info');
+        var queueEta = document.getElementById('queue-eta');
+        
+        // Simuler une file d'attente (positions aléatoires entre 1 et 15)
+        var simulatedQueue = Math.floor(Math.random() * 15) + 1;
+        var currentQueuePosition = simulatedQueue;
+        
+        // Afficher la queue au début si position > 0
+        if (simulatedQueue > 0) {
+            queueBlock.style.display = 'block';
+            updateQueueDisplay();
+        }
+        
+        function updateQueueDisplay() {
+            queuePosition.textContent = '#' + currentQueuePosition;
+            
+            if (currentQueuePosition === 1) {
+                queueInfo.textContent = 'Connexion imminente...';
+                queueEta.textContent = 'Quelques secondes';
+            } else {
+                var playersAhead = currentQueuePosition - 1;
+                queueInfo.textContent = playersAhead + ' joueur' + (playersAhead > 1 ? 's' : '') + ' devant vous';
+                var estimatedTime = currentQueuePosition * 5; // 5 secondes par joueur
+                queueEta.textContent = 'Temps estimé : ~' + estimatedTime + 's';
+            }
+        }
+        
+        // Décrémenter la position toutes les 3-7 secondes (simulation)
+        var queueInterval = setInterval(function() {
+            if (currentQueuePosition > 0) {
+                currentQueuePosition--;
+                updateQueueDisplay();
+                
+                // Masquer le bloc quand on atteint 0
+                if (currentQueuePosition === 0) {
+                    setTimeout(function() {
+                        queueBlock.style.display = 'none';
+                        clearInterval(queueInterval);
+                    }, 2000);
+                }
+            }
+        }, Math.random() * 4000 + 3000); // Entre 3 et 7 secondes
     </script>
 </body>
 </html>
