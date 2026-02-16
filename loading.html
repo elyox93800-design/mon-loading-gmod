@@ -212,6 +212,15 @@
             text-align: right;
         }
         
+        /* Aide clavier */
+        #keyboard-hint {
+            font-size: 11px;
+            color: rgba(136, 204, 255, 0.7);
+            margin-top: 8px;
+            text-align: center;
+            font-weight: 300;
+        }
+        
         /* Animation de pulsation pour le logo */
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
@@ -266,8 +275,9 @@
                     <span id="volume-icon">🔊</span>
                     <span>Volume musique</span>
                 </div>
-                <input type="range" id="volume-slider" min="0" max="100" value="2" step="1">
-                <div id="volume-value">2%</div>
+                <input type="range" id="volume-slider" min="0" max="100" value="20" step="5">
+                <div id="volume-value">20%</div>
+                <div id="keyboard-hint">Touches ↑/↓ ou +/- pour ajuster</div>
             </div>
         </div>
     </div>
@@ -278,24 +288,56 @@
         var volumeValue = document.getElementById('volume-value');
         var volumeIcon = document.getElementById('volume-icon');
 
-        // Volume initial (très bas)
-        music.volume = 0.02;
+        // Charger le volume sauvegardé (ou 20% par défaut)
+        var savedVolume = localStorage.getItem('inazuma_loading_volume');
+        var currentVolume = savedVolume ? parseInt(savedVolume) : 20;
+        
+        volumeSlider.value = currentVolume;
+        music.volume = currentVolume / 100;
+        updateVolumeDisplay(currentVolume);
 
-        // Gestion du slider de volume
-        volumeSlider.addEventListener('input', function() {
-            var volume = this.value / 100;
-            music.volume = volume;
-            volumeValue.textContent = this.value + '%';
+        // Fonction pour mettre à jour l'affichage du volume
+        function updateVolumeDisplay(volume) {
+            volumeValue.textContent = volume + '%';
+            volumeSlider.value = volume;
             
             // Changer l'icône selon le volume
-            if (this.value == 0) {
+            if (volume == 0) {
                 volumeIcon.textContent = '🔇';
-            } else if (this.value < 30) {
+            } else if (volume < 30) {
                 volumeIcon.textContent = '🔈';
-            } else if (this.value < 70) {
+            } else if (volume < 70) {
                 volumeIcon.textContent = '🔉';
             } else {
                 volumeIcon.textContent = '🔊';
+            }
+        }
+
+        // Fonction pour changer le volume
+        function setVolume(newVolume) {
+            newVolume = Math.max(0, Math.min(100, newVolume)); // Clamp entre 0 et 100
+            currentVolume = newVolume;
+            music.volume = newVolume / 100;
+            updateVolumeDisplay(newVolume);
+            localStorage.setItem('inazuma_loading_volume', newVolume); // Sauvegarder
+        }
+
+        // Gestion du slider de volume (pour ceux qui peuvent l'utiliser)
+        volumeSlider.addEventListener('input', function() {
+            setVolume(parseInt(this.value));
+        });
+
+        // CONTRÔLE PAR CLAVIER
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowUp' || e.key === '+' || e.key === '=') {
+                e.preventDefault();
+                setVolume(currentVolume + 5); // Augmenter de 5%
+            } else if (e.key === 'ArrowDown' || e.key === '-') {
+                e.preventDefault();
+                setVolume(currentVolume - 5); // Diminuer de 5%
+            } else if (e.key === 'm' || e.key === 'M') {
+                e.preventDefault();
+                setVolume(currentVolume === 0 ? 20 : 0); // Mute/Unmute
             }
         });
 
