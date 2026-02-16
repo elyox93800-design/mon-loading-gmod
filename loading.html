@@ -5,19 +5,222 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inazuma Eleven - Loading</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Arial', sans-serif; overflow: hidden; background: #1a1a2e; }
-        #background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('loading_background.png'); background-size: cover; background-position: center; z-index: 1; }
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)); z-index: 2; }
-        #content { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); width: 600px; z-index: 3; text-align: center; }
-        #title { font-size: 48px; font-weight: bold; color: #fff; text-shadow: 0 4px 10px rgba(0,0,0,0.8); margin-bottom: 10px; }
-        #subtitle { font-size: 20px; color: #88ccff; margin-bottom: 40px; }
-        #progress-container { width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
-        #progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #4facfe, #00f2fe); transition: width 0.3s ease; }
-        #status { font-size: 16px; color: #fff; }
-        #logo { position: fixed; top: 30px; left: 30px; font-size: 60px; z-index: 4; }
-        #server-info { position: fixed; top: 30px; right: 30px; color: #fff; text-align: right; z-index: 4; }
-        #server-name { font-size: 24px; font-weight: bold; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            overflow: hidden; 
+            background: #0a0e27; 
+        }
+        
+        /* Image de fond sans ombre forte */
+        #background { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-image: url('loading_background.png'); 
+            background-size: cover; 
+            background-position: center; 
+            z-index: 1; 
+        }
+        
+        /* Overlay très léger (réduit de 0.3-0.7 à 0.1-0.3) */
+        #overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: linear-gradient(to right, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0) 100%);
+            z-index: 2; 
+        }
+        
+        /* Menu gauche minimaliste */
+        #left-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 400px;
+            height: 100%;
+            background: rgba(10, 14, 39, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 3;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        /* Logo et titre */
+        #header {
+            margin-bottom: 40px;
+        }
+        
+        #logo {
+            font-size: 70px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+        
+        #title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        
+        #subtitle {
+            font-size: 16px;
+            color: #88ccff;
+            font-weight: 300;
+        }
+        
+        /* Section centrale avec infos */
+        #middle-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .info-block {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid #4facfe;
+            padding: 15px 20px;
+            border-radius: 4px;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #88ccff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 18px;
+            color: #fff;
+            font-weight: 500;
+        }
+        
+        /* Barre de progression */
+        #progress-section {
+            margin-top: 20px;
+        }
+        
+        #progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+        
+        #status {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
+        }
+        
+        /* Contrôle de volume */
+        #volume-control {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #volume-label {
+            font-size: 12px;
+            color: #88ccff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #volume-icon {
+            font-size: 18px;
+        }
+        
+        #volume-slider {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            outline: none;
+            cursor: pointer;
+        }
+        
+        #volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(79, 172, 254, 0.5);
+            transition: transform 0.2s;
+        }
+        
+        #volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        
+        #volume-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(79, 172, 254, 0.5);
+            transition: transform 0.2s;
+        }
+        
+        #volume-slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+        }
+        
+        #volume-value {
+            font-size: 14px;
+            color: #fff;
+            margin-top: 8px;
+            text-align: right;
+        }
+        
+        /* Animation de pulsation pour le logo */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        #logo {
+            animation: pulse 3s ease-in-out infinite;
+        }
     </style>
 </head>
 <body>
@@ -27,28 +230,79 @@
 
     <div id="background"></div>
     <div id="overlay"></div>
-    <div id="logo">⚽</div>
 
-    <div id="server-info">
-        <div id="server-name">INAZUMA ELEVEN</div>
-        <div>Map: <span id="map-name">Loading...</span></div>
-    </div>
+    <div id="left-panel">
+        <!-- Header -->
+        <div id="header">
+            <div id="logo">⚽</div>
+            <div id="title">INAZUMA ELEVEN</div>
+            <div id="subtitle">Rejoins l'équipe !</div>
+        </div>
 
-    <div id="content">
-        <div id="title">INAZUMA ELEVEN</div>
-        <div id="subtitle">Rejoins l'équipe !</div>
-        <div id="progress-container"><div id="progress-bar"></div></div>
-        <div id="status">Chargement...</div>
+        <!-- Middle Section -->
+        <div id="middle-section">
+            <div class="info-block">
+                <div class="info-label">Serveur</div>
+                <div class="info-value" id="server-name">Chargement...</div>
+            </div>
+
+            <div class="info-block">
+                <div class="info-label">Carte</div>
+                <div class="info-value" id="map-name">Chargement...</div>
+            </div>
+
+            <!-- Progression -->
+            <div id="progress-section">
+                <div class="info-label" style="margin-bottom: 10px;">Progression</div>
+                <div id="progress-container">
+                    <div id="progress-bar"></div>
+                </div>
+                <div id="status">Connexion au serveur...</div>
+            </div>
+
+            <!-- Contrôle de volume -->
+            <div id="volume-control">
+                <div id="volume-label">
+                    <span id="volume-icon">🔊</span>
+                    <span>Volume musique</span>
+                </div>
+                <input type="range" id="volume-slider" min="0" max="100" value="2" step="1">
+                <div id="volume-value">2%</div>
+            </div>
+        </div>
     </div>
 
     <script>
         var music = document.getElementById('loading-music');
+        var volumeSlider = document.getElementById('volume-slider');
+        var volumeValue = document.getElementById('volume-value');
+        var volumeIcon = document.getElementById('volume-icon');
+
+        // Volume initial (très bas)
         music.volume = 0.02;
 
-        // Fonction pour forcer le démarrage
+        // Gestion du slider de volume
+        volumeSlider.addEventListener('input', function() {
+            var volume = this.value / 100;
+            music.volume = volume;
+            volumeValue.textContent = this.value + '%';
+            
+            // Changer l'icône selon le volume
+            if (this.value == 0) {
+                volumeIcon.textContent = '🔇';
+            } else if (this.value < 30) {
+                volumeIcon.textContent = '🔈';
+            } else if (this.value < 70) {
+                volumeIcon.textContent = '🔉';
+            } else {
+                volumeIcon.textContent = '🔊';
+            }
+        });
+
+        // Fonction pour forcer le démarrage de la musique
         function startMusic() {
             music.play().then(function() {
-                console.log("Musique OK");
+                console.log("Musique démarrée");
             }).catch(function(e) {
                 console.log("En attente d'interaction...");
             });
@@ -58,15 +312,15 @@
         function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
             document.getElementById('server-name').textContent = servername;
             document.getElementById('map-name').textContent = mapname;
-            startMusic(); // Tentative 1
+            startMusic();
         }
 
-        // Tentative de secours au clic (pour le navigateur)
+        // Tentative de secours au clic
         window.addEventListener('click', function() {
             startMusic();
         });
 
-        // Tentative de secours automatique toutes les secondes
+        // Tentative automatique
         var forcePlay = setInterval(function() {
             if (!music.paused) {
                 clearInterval(forcePlay);
@@ -75,9 +329,16 @@
             }
         }, 1000);
 
-        function SetStatusChanged(status) { document.getElementById('status').textContent = status; }
-        function DownloadingFile(fileName) { document.getElementById('status').textContent = 'Téléchargement: ' + fileName; }
+        // Fonctions GMod
+        function SetStatusChanged(status) { 
+            document.getElementById('status').textContent = status; 
+        }
         
+        function DownloadingFile(fileName) { 
+            document.getElementById('status').textContent = 'Téléchargement: ' + fileName; 
+        }
+        
+        // Animation de la barre de progression
         let progress = 0;
         setInterval(function() {
             if (progress < 95) {
