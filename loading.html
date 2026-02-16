@@ -141,7 +141,6 @@
 
         /* Info serveur en haut à droite */
         #server-info {
-            D
             position: fixed;
             top: 30px;
             right: 30px;
@@ -166,23 +165,20 @@
     </style>
 </head>
 <body>
-    <audio id="loading-music" loop>
+    <audio id="loading-music" loop autoplay>
         <source src="loading_sound.mp3" type="audio/mpeg">
     </audio>
 
     <div id="background"></div>
     <div id="overlay"></div>
 
-    <!-- Logo -->
     <div id="logo">⚽</div>
 
-    <!-- Info serveur -->
     <div id="server-info">
         <div id="server-name">INAZUMA ELEVEN</div>
         <div id="server-map">Map: <span id="map-name">Loading...</span></div>
     </div>
 
-    <!-- Contenu principal -->
     <div id="content">
         <div id="title">INAZUMA ELEVEN</div>
         <div id="subtitle">Rejoins l'équipe !</div>
@@ -195,41 +191,43 @@
     </div>
 
     <script>
+        // Fonction pour forcer la lecture du son
+        function playMusic() {
+            var music = document.getElementById('loading-music');
+            music.volume = 0.3; // Volume à 30%
+            
+            // On essaie de jouer le son en boucle jusqu'à ce que le navigateur l'accepte
+            var playAttempt = setInterval(function() {
+                music.play().then(function() {
+                    clearInterval(playAttempt);
+                    console.log("Musique lancée avec succès !");
+                }).catch(function(error) {
+                    console.log("Lecture auto bloquée par le navigateur, nouvel essai...");
+                });
+            }, 1000);
+        }
+
         // Récupérer les infos du serveur depuis GMod
         function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
-        if (servername) {
-        document.getElementById('server-name').textContent = servername;
+            document.getElementById('server-name').textContent = servername;
+            document.getElementById('map-name').textContent = mapname;
+            
+            // On lance la tentative de lecture dès que les infos arrivent
+            playMusic();
         }
 
-        // --- AJOUTE CES LIGNES POUR LA MUSIQUE ---
-        var music = document.getElementById('loading-music');
-        music.volume = 0.3; // Volume à 30% pour ne pas surprendre les joueurs
-        music.play().catch(function(error) {
-        console.log("Le son attend une interaction pour démarrer");
-        });
-        // -----------------------------------------
-        }
-
-        // Mettre à jour la barre de progression
         function SetStatusChanged(status) {
             document.getElementById('status').textContent = status;
         }
 
-        // Progression (de 0 à 100)
         let progress = 0;
-        function SetFilesNeeded(needed) {
-            // Nombre de fichiers à télécharger
-        }
-
-        function SetFilesTotal(total) {
-            // Total de fichiers
-        }
+        function SetFilesNeeded(needed) {}
+        function SetFilesTotal(total) {}
 
         function DownloadingFile(fileName) {
             document.getElementById('status').textContent = 'Téléchargement: ' + fileName;
         }
 
-        // Simuler une progression fluide
         setInterval(function() {
             if (progress < 95) {
                 progress += Math.random() * 2;
@@ -237,11 +235,12 @@
             }
         }, 100);
 
-        // Quand le chargement est terminé
         window.addEventListener('load', function() {
             progress = 100;
             document.getElementById('progress-bar').style.width = '100%';
             document.getElementById('status').textContent = 'Prêt !';
+            // Tentative de secours au chargement de la fenêtre
+            playMusic();
         });
     </script>
 </body>
