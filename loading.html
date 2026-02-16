@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inazuma Eleven - Loading</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            background: #1a1a2e;
+        }
+
+        /* Image de fond */
+        #background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('loading_background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 1;
+        }
+
+        /* Overlay sombre pour la lisibilité */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                rgba(0, 0, 0, 0.3) 0%, 
+                rgba(0, 0, 0, 0.5) 50%,
+                rgba(0, 0, 0, 0.7) 100%);
+            z-index: 2;
+        }
+
+        /* Contenu principal */
+        #content {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            max-width: 90%;
+            z-index: 3;
+            text-align: center;
+        }
+
+        /* Titre */
+        #title {
+            font-size: 48px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+            margin-bottom: 10px;
+            animation: fadeInDown 1s ease-in-out;
+        }
+
+        /* Sous-titre */
+        #subtitle {
+            font-size: 20px;
+            color: #88ccff;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease-in-out 0.2s backwards;
+        }
+
+        /* Barre de progression */
+        #progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            margin-bottom: 15px;
+            animation: fadeInUp 1s ease-in-out 0.4s backwards;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.8);
+        }
+
+        /* Texte de chargement */
+        #status {
+            font-size: 16px;
+            color: #fff;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+            animation: fadeInUp 1s ease-in-out 0.6s backwards;
+        }
+
+        /* Animation pulsation pour le titre */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo en haut à gauche */
+        #logo {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            font-size: 60px;
+            z-index: 4;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+            animation: fadeInDown 1s ease-in-out;
+        }
+
+        /* Info serveur en haut à droite */
+        #server-info {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            color: #fff;
+            text-align: right;
+            z-index: 4;
+            animation: fadeInDown 1s ease-in-out 0.3s backwards;
+        }
+
+        #server-name {
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+        }
+
+        #server-map {
+            font-size: 14px;
+            color: #88ccff;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Image de fond -->
+    <div id="background"></div>
+    
+    <!-- Overlay -->
+    <div id="overlay"></div>
+
+    <!-- Logo -->
+    <div id="logo">⚽</div>
+
+    <!-- Info serveur -->
+    <div id="server-info">
+        <div id="server-name">INAZUMA ELEVEN</div>
+        <div id="server-map">Map: <span id="map-name">Loading...</span></div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div id="content">
+        <div id="title">INAZUMA ELEVEN</div>
+        <div id="subtitle">Rejoins l'équipe !</div>
+        
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        
+        <div id="status">Chargement en cours...</div>
+    </div>
+
+    <script>
+        // Récupérer les infos du serveur depuis GMod
+        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+            document.getElementById('server-name').textContent = servername;
+            document.getElementById('map-name').textContent = mapname;
+        }
+
+        // Mettre à jour la barre de progression
+        function SetStatusChanged(status) {
+            document.getElementById('status').textContent = status;
+        }
+
+        // Progression (de 0 à 100)
+        let progress = 0;
+        function SetFilesNeeded(needed) {
+            // Nombre de fichiers à télécharger
+        }
+
+        function SetFilesTotal(total) {
+            // Total de fichiers
+        }
+
+        function DownloadingFile(fileName) {
+            document.getElementById('status').textContent = 'Téléchargement: ' + fileName;
+        }
+
+        // Simuler une progression fluide
+        setInterval(function() {
+            if (progress < 95) {
+                progress += Math.random() * 2;
+                document.getElementById('progress-bar').style.width = progress + '%';
+            }
+        }, 100);
+
+        // Quand le chargement est terminé
+        window.addEventListener('load', function() {
+            progress = 100;
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('status').textContent = 'Prêt !';
+        });
+    </script>
+</body>
+</html>
